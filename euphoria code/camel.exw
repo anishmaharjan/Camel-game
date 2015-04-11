@@ -1,0 +1,300 @@
+--Camel Source Code for the BrailleNote
+--You have permission to modify and redistribute--this code and software with or without changes.
+--Pulse Data International, Rapid Deployment Software,
+--Programmers of other included files, and I take
+--no responsibility for damages you cause by your
+--modifying this software.
+--This code and software is provided 'as is' without
+--any implied or express warranty.
+
+--Game Starts Here.
+include get.e --Used to call wait_key().
+include misc.e --Used to suspend execution for any
+--given number of seconds.
+--First, let's declare some variables:
+integer you, --Where you are.
+pigmies, --The pigmies location.
+drinks, --How many drinks you have left.
+gocommands, --How many commands you have before you
+--need another drink.
+line, --Which while loop to jump to.
+days, --How many good days your camel has left.
+n --Temporary random number usages.
+atom key --Stores the user presses here.
+--Now, let's set up routines that initializes the
+--variables:
+procedure init() --The routine is called init.
+you = 0 --You haven't gone anywhere.
+pigmies = 25 --The pigmies are 25 miles ahead of you.
+drinks = 6 --You have six drinks left in your canteen.
+gocommands = 4 --You have 4 commands without drinking.
+days = 7 --Your camel has 7 good days left.
+end procedure --Done initializing.
+--Now let's start the game.
+clear_screen() --Erase text from the screen.
+line = 1
+while 1 do --The game's loop.
+puts(1, "\n Welcome to The Game Of Camel. ")
+while line = 1 do
+puts(1, "Would you like instructions? Type Y for ")
+puts(1, "yes or N for no. ")
+key = wait_key() --Wait for the user to enter something
+puts(1, '\n')
+if key = 'n' or key = 'N' then
+line = 2 --Jump to the next while-loop.
+exit --Continue on...
+elsif key = 'y' or key = 'Y' then--Give the instructions now.
+puts(1, "Welcome to the game of Camel. ")
+puts(1, "The object of the game is to travel 200 ")
+puts(1, "miles across the Great Gobi Desert. ")
+puts(1, "A tribe of knocked kneed Pigmies will be ")
+puts(1, "chasing you. ")
+puts(1, "You will be asked for commands every so ")
+puts(1, "often. ")
+puts(1, "C O M M A N D S: ")
+puts(1, "1 drink from your canteen, ")
+puts(1, "2 move ahead moderate speed, ")
+puts(1, "3 move ahead fast speed, ")
+puts(1, "4 stop for a rest, ")
+puts(1, "5 status check, ")
+puts(1, "and 6 hope for help. ")
+puts(1, "You will get a quart of water which will last")
+puts(1, "you six drinks. ")
+puts(1, "You must renew your water supply at an ")
+puts(1, "Oases completely. ")
+puts(1, "You get a half quart if found by help. ")
+puts(1, "If help does not find you after command ")
+puts(1, "'6', you lose. ")
+line = 2
+exit --Jump to the next while-loop.
+end if --Y or N wasn't entered. Re-ask the question.
+end while
+init() --Call the subroutine to initialize the
+--variables.
+puts(1, "Good luck and good cameling. ")
+while line = 2 do--Check where you are before letting you proceed.
+--Did you win? Or did the Pigmies capture you?
+--Or, maybe, you are still alive.
+if you >199 then --You made it!
+puts(1, "YOU WIN! A party is given in your honor! ")
+puts(1, "The Pigmies are planning to attend. ")
+line = 4 --Jump to the last while-loop.
+exit --Go ahead, JUMP!
+end if
+if pigmies >you then
+pigmies -= 1 --Let the Pigmies move back some to make it easier to catch you.
+printf(1, "The Pigmies are %d miles ahead of you.", {pigmies-you})
+end if
+if rand(2) = 1 and pigmies <you then --The Pigmies can cheat!
+if you-pigmies <5 then --They are less than five miles behind you.
+pigmies = you --Let them catch up to you.
+end if
+end if --NA! Don't cheat.
+if you >pigmies then --You are ahead of the pigmies.
+--Let them move.
+if rand(2) = 2 then --Trap the pigmies for a bit.
+pigmies = rand(you) --Move at a random speed.
+else --Let them catch up!
+pigmies += rand(20)
+end if
+end if --Forget it!
+if pigmies = you then
+puts(1, "THE PIGMIES HAVE CAPTURED YOU! CAMEL AND ")
+puts(1, "PEOPLE SOUP IS THEIR FAVORITE DISH. ")
+line = 4 --Jump to the last while-loop.
+exit --GO AHEAD, JUMP!
+end if --Looks to me like you are still alive.
+if gocommands <3 then --You had better get a drink.
+puts(1, "W A R N I N G -- GET A DRINK ")
+end if
+if gocommands = 0 then --Too many commands without
+--drinking.
+puts(1, "YOU RAN OUT OF WATER... SORRY CHUM!!!!!! ")
+line = 3 --Jump to the next while-loop.
+exit --GO AHEAD, JUMP!
+end if--What about your camel?
+if days < 1 then --You ran your camel to death!
+puts(1, "\n YOU DIRTY LOUSY RAP SCALLION!!! ")
+puts(1, "YOU RAN YOUR INNOCENT CAMEL TO DEATH! ")
+line = 3 --Jump to the next while-loop.
+exit --GO AHEAD, JUMP!
+end if--Well? Let's continue!
+if you = 0 then --You are just starting.
+puts(1, "You are in the middle of the desert at an ")
+puts(1, "Oases. ")
+end if
+if pigmies and you >pigmies then
+printf(1, "The Pigmies are %d miles behind you. ",{you-pigmies})
+end if
+printf(1, "You have travelled %d miles altogether, " &
+"and have %d more miles to go. ", {you, 200-you})
+while 3 do
+puts(1, "Your command? ")
+key = wait_key() --Wait for the user to enter something
+puts(1, '\n')
+if key = '1' then --The number one was pressed.
+--Drink from your canteen.
+if drinks = 0 then
+puts(1, "YOU RAN OUT OF WATER. SORRY CHUM!!!!!! ")
+line = 3 --Jump to the next while-loop.
+else --Get a drink?
+drinks -= 1
+puts(1, "BETTER WATCH FOR A OASIS. ")
+gocommands = 4 --Reset how many commands you can go
+--before drinking.
+exit --Repeat all over again starting from the
+--top of the prior while-loop.
+end if
+elsif key = '2' then --The number two was pressed.
+--Walk normally.
+you += rand(5) --Move randomly from 1 to 5 miles.
+days -= 1 --Subtract one day from the camel.
+puts(1, "Your camel likes this paste! ")
+gocommands -= 1 --Subtract commands you have before drinking.
+exit --Tell where you are.
+elsif key = '3' then --The number three was pressed.
+--So try to run!
+gocommands -= 1 --You wasted one more command.
+n = rand(4) --What happens here?
+--Let's see.
+if n = 1 then --The Note-taker chose the first action.
+--The first action is a sand-storm.
+puts(1, "YOU HAVE BEEN CAUGHT IN A SAND-STORM... ")
+puts(1, "GOOD LUCK! ")
+you += rand(5) --Slow down.
+exit --Return to the previous while-loop and see
+--where we are.
+elsif n = 2 then --The Note-taker chose to perform
+--the second action. This action is to let your
+--camel find an oases.
+puts(1, "You have stopped at an Oases. Your camel is ")
+puts(1, "filling your canteen and eating figs. ")
+drinks = 6 --Put six more drinks in the canteen.
+gocommands = 4 --Reset the commands.
+n = 4 --Force the Note-taker to do the last action.
+elsif n = 3 then --Oops! The Note-taker chose the
+--third action. This action gets you caught by a
+--hidden sand berber.
+puts(1, "YOU HAVE BEEN CAPTURED BY A HIDDENSAND-BERBER. ")
+puts(1, "Luckily the local sheik has agreed to their ")
+puts(1, "ransom-demands... But... watch for thePigmies. ")
+puts(1, "You have a new set of commands. ")
+puts(1, "#7 attempt an escape, or #8 wait for payment.")
+while 2 do --This while-loop lets the user type in
+--one of the subcommands.
+puts(1, "Your sub-command? ")
+key = wait_key() --Wait for the user to enter something
+puts(1, '\n')
+if key = '7' then --The number seven was pressed.
+--Attempt an escape.
+n = rand(2) --One of two things can happen.
+if n = 1 then --You made it.
+puts(1, "CONGRATULATIONS! YOU SUCCESSFULLY ESCAPED! ")
+exit --Get out of this while-loop.
+else --Well, you didn't make it.
+puts(1, "You were mortally wounded by a pig stabber ")
+puts(1, "while trying to escape. ")
+line = 3 --Jump to the next while-loop.
+exit --Go ahead, jump!
+end if --The user didn't enter seven.
+elsif key = '8' then --The number eight was pressed.
+puts(1, "Your ransom has been payed and you are ")
+puts(1, "free to go. The local sultin is collecting. ")
+puts(1, "Just Wait ")
+sleep(10) --Stop for ten seconds.
+you += rand(3) --Move from one to three miles.
+--The berbers slowed you down.
+exit --Get out of this loop and continue.
+end if --Seven or eight wasn't pressed.
+end while
+end if --The camel must be ready to run!
+if n = 4 then --Your camel is burning across
+--the desert sands.
+you += rand(20) --Randomly move from one to
+--twenty miles.
+puts(1, "Your camel is burning across the desert ")
+puts(1, "sands. ")
+days -= 3 --Subtract three days from your camel.
+exit --Get out of this loop, and find where we are.
+end if --The computer must have chosen one of those
+--actions.
+--You should never get here unless you press number
+--4.
+exit --Restart over again.
+elsif key = '4' then --The number four was pressed.
+--So, let the camel rest.
+puts(1, "Your camel thanks you. ")
+days = 7 --You now have seven good days left.
+gocommands -= 1 --Lose one more command.
+exit --Continue on with the application.
+elsif key = '5' then --Status Check Please?
+--The number five was pressed.
+printf(1, "Your camel has %d good days left. " &
+"You have %d drinks left in the canteen. " &
+"You can go %d commands without drinking. " &
+"BETTER WATCH FOR AN OASES. ", {days, drinks, gocommands})
+elsif key = '6' then --HELP! SIX WAS PRESSED.
+n = rand(2) --Chose whether to give out help or not.
+if n = 1 then --Give Help.
+puts(1, "Help has found you in a state of ")
+puts(1, "unconsciousness. ")--Let the camel rest for a while.
+days = 7 --Your camel is rejubinated.
+drinks = 3 --You get the half-quart of water.
+--You drink some water and get more commands.
+gocommands = 8 --You now have eight commands without
+--drinking.
+else --Help hasn't found you.
+line = 3 --Jump to the next while-loop.
+exit --Go ahead! JUMP!
+end if
+else --Invalid option.
+puts(1, "Invalid Option. ")
+puts(1, "The commands you can choose from are: ")
+puts(1, "1 drink from your canteen ")
+puts(1, "2 move ahead moderate speed ")
+puts(1, "3 move ahead fast speed ")
+puts(1, "4 stop for a rest ")
+puts(1, "5 status check ")
+puts(1, "6 hope for help ")
+puts(1, "Simply type the command in by number using ")
+puts(1, "Computer Braille and don't press ENTER. ")
+end if --Either loop again or continue.
+end while --End of while-loop two.
+end while --Done checking position.
+if line = 3 then --This isn't a loop. It generates
+--loser statements.
+n = rand(5) --We have five loser statements.
+puts(1, "Your body and soul lay a rest in the sand. ")
+if n = 1 then --This is the first loser statement.
+puts(1, "The National's Camel Union is not attending ")
+puts(1, "your funeral!!!!!! ")
+elsif n = 2 then --This is the second loser statement.
+puts(1, "Your body was eaten by voltures and ")
+puts(1, "imported cannon balls!!!!!! ")
+elsif n = 3 then --This is the third loser statement.
+puts(1, "The local shiek now uses your skull for a ")
+puts(1, "chain purse!!!!!! ")
+elsif n = 4 then --This is the fourth loser statement.
+puts(1, "People with little inteligence should ")
+puts(1, "stay out of the desert. ")
+elsif n = 5 then --This is the last loser statement.
+puts(1, "Turkeys should fly, not ride camels. ")
+end if --No more loser statements.
+end if
+line = 4 --Jump to the last while-loop.
+while line = 4 do --The Last while-loop.
+puts(1, "Want another camel and a new game? ")
+key = wait_key() --Wait for the user to enter something
+puts(1, '\n')
+if key = 'y' or key = 'Y' then --Yes was entered.
+line = 1 --Jump to the first while-loop.
+exit --Start all over.
+elsif key = 'n' or key = 'N' then --No was entered.
+--So abort after the last comment.
+puts(1, "CHICKEN! ")
+sleep(5) --Suspend execution for five seconds.
+abort(0) --Shutdown the program.
+end if --Y or N wasn't pressed, so re-ask the question.
+end while
+end while
+--End of program.
